@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useContext } from "react";
 import {
   BarChart,
   Bar,
@@ -10,6 +10,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { CalendarDays } from "lucide-react";
+import { ThemeContext } from "../context/ThemeProvider";
 
 const data = [
   { month: "Jan", expenses: 800 },
@@ -20,7 +21,11 @@ const data = [
   { month: "Jun", expenses: 650 },
 ];
 
-const SpendingTrendChart = () => {
+const SpendingTrendChart = ({ chartColors }) => {
+  const { colorScheme, colorSchemes } = useContext(ThemeContext);
+
+  const colors = chartColors || colorSchemes[colorScheme].chartColors;
+
   return (
     <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-300">
       <div className="flex items-center mb-4 text-gray-800">
@@ -30,21 +35,21 @@ const SpendingTrendChart = () => {
       <div className="h-[300px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-            <XAxis dataKey="month" stroke="#718096" />
-            <YAxis stroke="#718096" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--card-border)" />
+            <XAxis dataKey="month" stroke="var(--foreground)" />
+            <YAxis stroke="var(--foreground)" />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#fff",
-                border: "1px solid #e2e8f0",
+                backgroundColor: "var(--card-bg)",
+                border: "1px solid var(--card-border)",
                 borderRadius: "6px",
               }}
-              labelStyle={{ color: "#4a5568" }}
-              itemStyle={{ color: "#4a5568" }}
+              labelStyle={{ color: "var(--foreground)" }}
+              itemStyle={{ color: "var(--foreground)" }}
             />
             <Bar
               dataKey="expenses"
-              fill="#87CEFA"
+              fill={colors[0]}
               barSize={30}
               radius={[10, 10, 0, 0]}
             />

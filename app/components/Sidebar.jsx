@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 import {
   Bell,
   DollarSign,
@@ -14,6 +14,7 @@ import {
 import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { ThemeContext } from "../context/ThemeProvider";
 
 const ICONS = {
   House,
@@ -28,18 +29,16 @@ const ICONS = {
 };
 
 const Sidebar = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { colorScheme, colorSchemes } = useContext(ThemeContext);
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   const pathname = usePathname();
   const sidebarItems = [
     { id: 1, label: "Home", href: "/overview", icon: "House" },
-    { id: 2, label: "Earnings", href: "/earnings", icon: "DollarSign" },
-    { id: 3, label: "Settings", href: "/settings", icon: "Settings" },
-    { id: 4, label: "Shop", href: "/shop", icon: "ShoppingBag" },
-    { id: 5, label: "Cart", href: "/cart", icon: "ShoppingCart" },
-    { id: 6, label: "Messages", href: "/messages", icon: "Mail" },
-    { id: 7, label: "Users", href: "/users", icon: "Users" },
-    { id: 8, label: "Notifications", href: "/notifications", icon: "Bell" },
-    { id: 9, label: "About", href: "/about", icon: "Info" },
+    { id: 2, label: "name", href: "/earnings", icon: "DollarSign" },
+    { id: 3, label: "name", href: "/settings", icon: "Settings" },
+    { id: 4, label: "name", href: "/shop", icon: "ShoppingBag" },
+
+    { id: 7, label: "name", href: "/users", icon: "Users" },
   ];
 
   return (
@@ -48,14 +47,15 @@ const Sidebar = () => {
         isSidebarOpen ? "w-64" : "w-20"
       }`}
     >
-      <div className="h-full bg-white p-4 flex flex-col border-r border-gray-100 shadow-sm">
+      <div className="h-full bg-white dark:bg-gray-800 p-4 flex flex-col border-r border-gray-100 dark:border-gray-700 shadow-sm transition-colors duration-300">
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-2 rounded-full hover:bg-gray-50 transition-colors duration-300 max-w-fit cursor-pointer"
+          className="p-2 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-300 max-w-fit cursor-pointer"
+          aria-label="Toggle sidebar"
         >
           <Menu
             size={24}
-            className="text-gray-600 hover:text-gray-800 transition-colors duration-300"
+            className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 transition-colors duration-300"
           />
         </button>
         <nav className="mt-8 flex-grow">
@@ -64,16 +64,20 @@ const Sidebar = () => {
             return (
               <Link key={item.id} href={item.href}>
                 <div
-                  className={`flex items-center p-4 text-sm font-medium rounded-lg hover:bg-gray-50 transition-all duration-300 mb-2 ${
+                  className={`flex items-center p-4 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 mb-2 ${
                     pathname === item.href
-                      ? "bg-blue-50 text-blue-600"
-                      : "text-gray-600"
-                  } hover:text-gray-900 hover:scale-105 transform`}
+                      ? `${colorSchemes[colorScheme].primary} text-white`
+                      : "text-gray-600 dark:text-gray-300"
+                  } hover:text-gray-900 dark:hover:text-gray-100 hover:scale-105 transform`}
                 >
                   {IconComponent && (
                     <IconComponent
                       size={20}
-                      className="transition-colors duration-300"
+                      className={`transition-colors duration-300 ${
+                        pathname === item.href
+                          ? "text-white"
+                          : "text-gray-600 dark:text-gray-300"
+                      }`}
                     />
                   )}
                   {isSidebarOpen && (

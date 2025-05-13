@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useContext } from "react";
 import {
   PieChart,
   Pie,
@@ -8,6 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { ThemeContext } from "../context/ThemeProvider";
 
 const data = [
   { name: "Food", value: 30 },
@@ -17,9 +18,10 @@ const data = [
   { name: "Others", value: 10 },
 ];
 
-const COLORS = ["#FFB6C1", "#87CEFA", "#FFD700", "#98FB98", "#DDA0DD"];
+const CategoryChart = ({ chartColors }) => {
+  const { colorScheme, colorSchemes } = useContext(ThemeContext);
+  const colors = chartColors || colorSchemes[colorScheme].chartColors;
 
-const CategoryChart = () => {
   return (
     <div className="bg-white shadow-sm rounded-xl p-4 md:p-6 border border-gray-100 mx-4 md:mx-0 transition-all duration-300 hover:shadow-md">
       <h2 className="text-base md:text-lg font-semibold text-gray-800 mb-4">
@@ -47,21 +49,27 @@ const CategoryChart = () => {
               {data.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
+                  fill={colors[index % colors.length]}
                   className="hover:opacity-90 transition-opacity duration-300"
                 />
               ))}
             </Pie>
             <Tooltip
               contentStyle={{
-                backgroundColor: "#fff",
-                border: "1px solid #e2e8f0",
+                backgroundColor: "var(--tooltip-bg)",
+                border: "1px solid var(--tooltip-border)",
                 borderRadius: "8px",
-                color: "#4a5568",
+                color: "var(--tooltip-text)",
                 boxShadow: "0 2px 10px rgba(0, 0, 0, 0.05)",
               }}
             />
-            <Legend verticalAlign="bottom" height={36} />
+            <Legend
+              verticalAlign="bottom"
+              height={36}
+              formatter={(value) => (
+                <span className="text-gray-800">{value}</span>
+              )}
+            />
           </PieChart>
         </ResponsiveContainer>
       </div>

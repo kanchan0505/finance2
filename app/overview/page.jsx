@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useContext } from "react";
 import StatCard from "../components/StatCard";
 import {
   DollarSign,
@@ -11,9 +11,16 @@ import Profit from "../components/Profit";
 import Expensechart from "../components/Expensechart";
 import CategoryChart from "../components/CategoryChart";
 import SpendingTrendChart from "../components/SpendingTrendChart";
-const Page = () => {
+import { ThemeContext } from "../context/ThemeProvider";
+
+export default function Overview() {
+  const { colorScheme, colorSchemes } = useContext(ThemeContext);
+
   return (
-    <div className="flex-1 overflow-auto relative z-10">
+    <div
+      className="flex-1 overflow-auto relative z-10 transition-colors duration-300"
+      style={{ backgroundColor: "var(--background)" }}
+    >
       <main className="max-w-7xl mx-auto py-4 px-4 lg:px-8">
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-6">
           <StatCard name="Total Income" icon={DollarSign} value="$5,000" />
@@ -26,25 +33,24 @@ const Page = () => {
           <StatCard name="Remaining Budget" icon={CreditCard} value="$500" />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          {/* First Row */}
           <div className="w-full">
-            <Expensechart />
+            <Expensechart chartColors={colorSchemes[colorScheme].chartColors} />
           </div>
           <div className="w-full">
-            <CategoryChart />
-          </div>
-
-          {/* Second Row */}
-          <div className="w-full">
-            <Profit />
+            <CategoryChart
+              chartColors={colorSchemes[colorScheme].chartColors}
+            />
           </div>
           <div className="w-full">
-            <SpendingTrendChart />
+            <Profit chartColors={colorSchemes[colorScheme].chartColors} />
+          </div>
+          <div className="w-full">
+            <SpendingTrendChart
+              chartColors={colorSchemes[colorScheme].chartColors}
+            />
           </div>
         </div>
       </main>
     </div>
   );
-};
-
-export default Page;
+}
