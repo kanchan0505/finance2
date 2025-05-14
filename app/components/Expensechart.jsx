@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { TrendingUp } from "lucide-react";
 import { ThemeContext } from "../context/ThemeProvider";
+import { LanguageContext } from "../context/LanguageProvider";
 
 const chartData = [
   { month: "Jan", expenses: 1200, income: 2000 },
@@ -29,14 +30,13 @@ const chartData = [
 
 const Expensechart = ({ chartColors }) => {
   const { colorScheme, colorSchemes } = useContext(ThemeContext);
+  const { t } = useContext(LanguageContext);
   const colors = chartColors || colorSchemes[colorScheme].chartColors;
 
   return (
     <div className="bg-white shadow-sm rounded-xl p-4 md:p-6 border border-gray-100 mx-4 md:mx-0 transition-all duration-300 hover:shadow-md">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base md:text-lg font-semibold text-gray-800">
-          Monthly Expenses vs Income
-        </h2>
+        <h2 className="text-base md:text-lg font-semibold text-gray-800"></h2>
         <TrendingUp className="h-5 w-5 text-blue-400 dark:text-blue-300 hover:text-blue-600 dark:hover:text-blue-200 transition-colors duration-300" />
       </div>
       <div className="w-full h-[300px] md:h-[400px]">

@@ -1,4 +1,3 @@
-"use client";
 import React, { useContext } from "react";
 import {
   PieChart,
@@ -9,6 +8,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { ThemeContext } from "../context/ThemeProvider";
+import { LanguageContext } from "../context/LanguageProvider";
 
 const data = [
   { name: "Food", value: 30 },
@@ -20,12 +20,13 @@ const data = [
 
 const CategoryChart = ({ chartColors }) => {
   const { colorScheme, colorSchemes } = useContext(ThemeContext);
+  const { t } = useContext(LanguageContext);
   const colors = chartColors || colorSchemes[colorScheme].chartColors;
 
   return (
     <div className="bg-white shadow-sm rounded-xl p-4 md:p-6 border border-gray-100 mx-4 md:mx-0 transition-all duration-300 hover:shadow-md">
       <h2 className="text-base md:text-lg font-semibold text-gray-800 mb-4">
-        Expense Category Distribution
+        {t("expenseCategory")}
       </h2>
       <div className="w-full h-[300px] md:h-[400px]">
         <ResponsiveContainer width="100%" height="100%">

@@ -1,8 +1,12 @@
+"use client";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import ThemeProvider from "./context/ThemeProvider";
+import LanguageProvider from "./context/LanguageProvider";
+import ThemeSidebar from "./components/ThemeSidebar";
+import { useState } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,27 +18,30 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
-  title: "Finance Management App",
-  description: "Manage your finances with ease.",
-};
-
 export default function RootLayout({ children }) {
+  const [isThemeSidebarOpen, setIsThemeSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsThemeSidebarOpen((prev) => !prev);
+  };
+
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={isThemeSidebarOpen ? "theme-sidebar-open" : ""}>
         <ThemeProvider>
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex flex-col flex-1 overflow-auto">
-              <div className="w-full max-w-7xl mx-auto px-4 lg:px-8">
-                <Header />
-                <main>{children}</main>
+          <LanguageProvider>
+            <div className="flex min-h-screen">
+              <Sidebar />
+              <div className="flex-1 flex flex-col">
+                <Header toggleSidebar={toggleSidebar} />
+                {children}
               </div>
+              <ThemeSidebar
+                isOpen={isThemeSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </div>
-          </div>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,5 +1,10 @@
 "use client";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
+import { Menu } from "lucide-react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { ThemeContext } from "../context/ThemeProvider";
+import { LanguageContext } from "../context/LanguageProvider";
 import {
   Bell,
   DollarSign,
@@ -11,34 +16,30 @@ import {
   ShoppingCart,
   Info,
 } from "lucide-react";
-import { Menu } from "lucide-react";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import { ThemeContext } from "../context/ThemeProvider";
 
 const ICONS = {
-  House,
+  Bell,
   DollarSign,
+  House,
+  Mail,
   Settings,
+  Users,
   ShoppingBag,
   ShoppingCart,
-  Mail,
-  Users,
-  Bell,
   Info,
 };
 
 const Sidebar = () => {
   const { colorScheme, colorSchemes } = useContext(ThemeContext);
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+  const { t } = useContext(LanguageContext);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const pathname = usePathname();
   const sidebarItems = [
-    { id: 1, label: "Home", href: "/overview", icon: "House" },
-    { id: 2, label: "name", href: "/earnings", icon: "DollarSign" },
-    { id: 3, label: "name", href: "/settings", icon: "Settings" },
-    { id: 4, label: "name", href: "/shop", icon: "ShoppingBag" },
-
-    { id: 7, label: "name", href: "/users", icon: "Users" },
+    { id: 1, label: t("home"), href: "/overview", icon: "House" },
+    { id: 2, label: t("earnings"), href: "/earnings", icon: "DollarSign" },
+    { id: 3, label: t("settings"), href: "/settings", icon: "Settings" },
+    { id: 4, label: t("shop"), href: "/shop", icon: "ShoppingBag" },
+    { id: 7, label: t("users"), href: "/users", icon: "Users" },
   ];
 
   return (
