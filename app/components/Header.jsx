@@ -1,45 +1,63 @@
 "use client";
 import React, { useContext } from "react";
-import Image from "next/image";
-import { Bell, Palette } from "lucide-react";
-import { ThemeContext } from "../context/ThemeProvider";
+import { Globe, Settings } from "lucide-react";
+import { LanguageContext } from "../context/LanguageProvider";
+import Link from "next/link";
 
-import user from "../../public/images/user2.jpg";
+const Header = ({ isSidebarOpen }) => {
+  const { language, setLanguage, t } = useContext(LanguageContext);
 
-const Header = ({ toggleSidebar }) => {
-  const { theme } = useContext(ThemeContext);
+  const languages = [
+    { code: "en", name: "English" },
+    { code: "es", name: "Español" },
+    { code: "hi", name: "हिन्दी (Hindi)" },
+  ];
 
   return (
-    <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-100 dark:border-gray-700 mx-4 sm:mx-6 lg:mx-8 mt-4 mb-2 rounded-lg transition-colors duration-300">
-      <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 flex items-center justify-between">
-        <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-800 dark:text-gray-100">
+    <header
+      className={`fixed top-0 left-0 right-0 bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700 transition-all duration-300 z-20 ${
+        isSidebarOpen ? "ml-64" : "ml-16"
+      } h-16 flex items-center`}
+    >
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
           Dashboard
         </h1>
-        <div className="flex items-center space-x-3 sm:space-x-6">
-          <div className="relative">
-            <Bell className="w-5 sm:w-6 h-5 sm:h-6 text-gray-500 dark:text-gray-300 cursor-pointer hover:text-gray-700 dark:hover:text-gray-100 transition-colors duration-300" />
-          </div>
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-4">
+          {/* Language Dropdown */}
+          <div className="relative group">
             <button
-              onClick={toggleSidebar}
               className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300"
-              aria-label="Open theme changer"
+              aria-label="Select language"
             >
-              <Palette className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+              <Globe className="w-5 h-5 text-gray-600 dark:text-gray-300" />
             </button>
+            <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 shadow-lg rounded-md overflow-hidden hidden group-hover:block z-50">
+              {languages.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => setLanguage(lang.code)}
+                  className={`w-full py-2 px-4 text-left text-sm ${
+                    language === lang.code
+                      ? "bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100"
+                      : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200"
+                  } transition-colors duration-300`}
+                >
+                  {lang.name}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="flex items-center space-x-2 sm:space-x-3 group">
-            <Image
-              src={user}
-              alt="user"
-              width={35}
-              height={35}
-              className="rounded-full border-2 border-gray-200 dark:border-gray-600 group-hover:border-gray-300 dark:group-hover:border-gray-500 transition-colors duration-300"
-            />
-            <span className="hidden sm:block text-gray-700 dark:text-gray-200 font-medium group-hover:text-gray-900 dark:group-hover:text-gray-100 transition-colors duration-300">
-              User Name
-            </span>
-          </div>
+
+          {/* Settings Icon */}
+          <Link href="/settings">
+            <button
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300"
+              aria-label="Go to settings"
+            >
+              <Settings className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+            </button>
+          </Link>
         </div>
       </div>
     </header>

@@ -18,6 +18,16 @@ const ThemeProvider = ({ children }) => {
     return localStorage.getItem("colorScheme") || "blue";
   });
 
+  const [isThemeSidebarOpen, setIsThemeSidebarOpen] = useState(false);
+
+  const toggleThemeSidebar = () => {
+    console.log(
+      "toggleThemeSidebar called, current state:",
+      isThemeSidebarOpen
+    );
+    setIsThemeSidebarOpen((prev) => !prev);
+  };
+
   useEffect(() => {
     const root = document.documentElement;
     root.classList.toggle("dark", theme === "dark");
@@ -54,7 +64,15 @@ const ThemeProvider = ({ children }) => {
 
   return (
     <ThemeContext.Provider
-      value={{ theme, toggleTheme, colorScheme, setColorScheme, colorSchemes }}
+      value={{
+        theme,
+        toggleTheme,
+        colorScheme,
+        setColorScheme,
+        colorSchemes,
+        isThemeSidebarOpen,
+        toggleThemeSidebar,
+      }}
     >
       {children}
     </ThemeContext.Provider>

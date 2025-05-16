@@ -6,6 +6,7 @@ import Sidebar from "./components/Sidebar";
 import ThemeProvider from "./context/ThemeProvider";
 import LanguageProvider from "./context/LanguageProvider";
 import ThemeSidebar from "./components/ThemeSidebar";
+import CustomCursor from "./context/CustomCursor";
 import { useState } from "react";
 
 const geistSans = Geist({
@@ -19,27 +20,21 @@ const geistMono = Geist_Mono({
 });
 
 export default function RootLayout({ children }) {
-  const [isThemeSidebarOpen, setIsThemeSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsThemeSidebarOpen((prev) => !prev);
-  };
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className={isThemeSidebarOpen ? "theme-sidebar-open" : ""}>
+      <body className="antialiased bg-gray-50 dark:bg-gray-900">
         <ThemeProvider>
           <LanguageProvider>
+            <CustomCursor />
             <div className="flex min-h-screen">
-              <Sidebar />
+              <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
               <div className="flex-1 flex flex-col">
-                <Header toggleSidebar={toggleSidebar} />
-                {children}
+                <Header isSidebarOpen={isSidebarOpen} />
+                <main className="flex-1 pt-16">{children}</main>
               </div>
-              <ThemeSidebar
-                isOpen={isThemeSidebarOpen}
-                toggleSidebar={toggleSidebar}
-              />
+              <ThemeSidebar />
             </div>
           </LanguageProvider>
         </ThemeProvider>

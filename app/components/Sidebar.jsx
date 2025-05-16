@@ -1,94 +1,93 @@
 "use client";
-import React, { useContext, useState } from "react";
-import { Menu } from "lucide-react";
+import React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { ThemeContext } from "../context/ThemeProvider";
-import { LanguageContext } from "../context/LanguageProvider";
 import {
-  Bell,
-  DollarSign,
+  Menu,
   House,
-  Mail,
+  DollarSign,
   Settings,
-  Users,
   ShoppingBag,
-  ShoppingCart,
-  Info,
+  Users,
 } from "lucide-react";
 
 const ICONS = {
-  Bell,
-  DollarSign,
   House,
-  Mail,
+  DollarSign,
   Settings,
-  Users,
   ShoppingBag,
-  ShoppingCart,
-  Info,
+  Users,
 };
 
-const Sidebar = () => {
-  const { colorScheme, colorSchemes } = useContext(ThemeContext);
-  const { t } = useContext(LanguageContext);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+const Sidebar = ({ isOpen, setIsOpen }) => {
   const pathname = usePathname();
+
   const sidebarItems = [
-    { id: 1, label: t("home"), href: "/overview", icon: "House" },
-    { id: 2, label: t("earnings"), href: "/earnings", icon: "DollarSign" },
-    { id: 3, label: t("settings"), href: "/settings", icon: "Settings" },
-    { id: 4, label: t("shop"), href: "/shop", icon: "ShoppingBag" },
-    { id: 7, label: t("users"), href: "/users", icon: "Users" },
+    { id: 1, label: "Home", href: "/overview", icon: "House" },
+    { id: 2, label: "Earnings", href: "/earnings", icon: "DollarSign" },
+    { id: 3, label: "Settings", href: "/settings", icon: "Settings" },
+    { id: 4, label: "Shop", href: "/shop", icon: "ShoppingBag" },
+    { id: 5, label: "Users", href: "/users", icon: "Users" },
   ];
 
   return (
     <div
-      className={`relative z-10 transition-all duration-500 ease-in-out flex-shrink-0 ${
-        isSidebarOpen ? "w-64" : "w-20"
-      }`}
+      className={`fixed top-0 left-0 h-screen ${
+        isOpen ? "w-64" : "w-16"
+      } bg-white dark:bg-gray-800 flex flex-col items-start py-4 border-r border-gray-200 dark:border-gray-700 shadow-lg transition-all duration-300 z-30`}
     >
-      <div className="h-full bg-white dark:bg-gray-800 p-4 flex flex-col border-r border-gray-100 dark:border-gray-700 shadow-sm transition-colors duration-300">
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-2 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-300 max-w-fit cursor-pointer"
-          aria-label="Toggle sidebar"
-        >
-          <Menu
-            size={24}
-            className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 transition-colors duration-300"
-          />
-        </button>
-        <nav className="mt-8 flex-grow">
-          {sidebarItems.map((item) => {
-            const IconComponent = ICONS[item.icon];
-            return (
-              <Link key={item.id} href={item.href}>
-                <div
-                  className={`flex items-center p-4 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 mb-2 ${
-                    pathname === item.href
-                      ? `${colorSchemes[colorScheme].primary} text-white`
-                      : "text-gray-600 dark:text-gray-300"
-                  } hover:text-gray-900 dark:hover:text-gray-100 hover:scale-105 transform`}
-                >
-                  {IconComponent && (
-                    <IconComponent
-                      size={20}
-                      className={`transition-colors duration-300 ${
-                        pathname === item.href
-                          ? "text-white"
-                          : "text-gray-600 dark:text-gray-300"
-                      }`}
-                    />
-                  )}
-                  {isSidebarOpen && (
-                    <span className="ml-4 whitespace-nowrap">{item.label}</span>
-                  )}
-                </div>
-              </Link>
-            );
-          })}
-        </nav>
+      {/* Toggle Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-300 mx-auto mb-6"
+        aria-label="Toggle sidebar"
+      >
+        <Menu
+          size={24}
+          className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 transition-colors duration-300"
+        />
+      </button>
+
+      <nav className="flex flex-col items-start w-full space-y-4 flex-grow px-2">
+        {sidebarItems.map((item) => {
+          const IconComponent = ICONS[item.icon];
+          return (
+            <Link key={item.id} href={item.href}>
+              <div
+                className={`flex items-center p-2 w-full rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 ${
+                  pathname === item.href
+                    ? "bg-blue-500 text-white"
+                    : "text-gray-600 dark:text-gray-300"
+                } hover:text-gray-900 dark:hover:text-gray-100 hover:scale-105 transform`}
+              >
+                {IconComponent && (
+                  <IconComponent
+                    size={24}
+                    className={`transition-colors duration-300 ${
+                      pathname === item.href
+                        ? "text-white"
+                        : "text-gray-600 dark:text-gray-300"
+                    }`}
+                  />
+                )}
+                {isOpen && (
+                  <span className="ml-3 text-sm font-medium">{item.label}</span>
+                )}
+              </div>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Issue Badge */}
+      <div
+        className={`mb-4 ${
+          isOpen ? "px-4" : "px-2"
+        } w-full flex justify-center`}
+      >
+        <div className="bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full flex items-center">
+          <span>1 ISSUE</span>
+        </div>
       </div>
     </div>
   );
