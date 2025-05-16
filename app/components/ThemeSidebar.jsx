@@ -1,4 +1,3 @@
-"use client";
 import React, { useContext } from "react";
 import { X } from "lucide-react";
 import { ThemeContext } from "../context/ThemeProvider";
@@ -16,67 +15,123 @@ const ThemeSidebar = () => {
   } = useContext(ThemeContext);
   const { t } = useContext(LanguageContext);
 
-  // Debug log to confirm isOpen state
-  console.log("ThemeSidebar isOpen:", isThemeSidebarOpen);
-
   return (
     <aside
-      className={`fixed top-0 right-0 h-screen w-80 bg-white dark:bg-gray-800 shadow-xl transform transition-transform duration-300 ease-in-out z-50 ${
-        isThemeSidebarOpen ? "translate-x-0" : "translate-x-full"
-      }`}
+      style={{
+        position: "fixed",
+        top: 0,
+        right: 0,
+        height: "100vh",
+        width: "320px",
+        background: theme === "dark" ? "#1f2937" : "#ffffff",
+        boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+        transform: isThemeSidebarOpen ? "translateX(0)" : "translateX(100%)",
+        transition: "transform 0.3s ease-in-out",
+        zIndex: 50,
+        padding: "24px",
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
-      <div className="p-6 h-full flex flex-col">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-            {t("themeSettings")}
-          </h2>
-          <button
-            onClick={toggleThemeSidebar}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300"
-            aria-label="Close sidebar"
-          >
-            <X className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-          </button>
-        </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "24px",
+        }}
+      >
+        <h2
+          style={{
+            fontSize: "20px",
+            color: theme === "dark" ? "#f9fafb" : "#1f2937",
+          }}
+        >
+          {t("themeSettings")}
+        </h2>
+        <button
+          onClick={toggleThemeSidebar}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "8px",
+            borderRadius: "999px",
+          }}
+          aria-label="Close sidebar"
+        >
+          <X color={theme === "dark" ? "#d1d5db" : "#4b5563"} size={20} />
+        </button>
+      </div>
 
-        {/* Theme Toggle Section */}
-        <div className="mb-8">
-          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            {t("theme")}
-          </h3>
-          <button
-            onClick={toggleTheme}
-            className={`w-full py-2 px-4 rounded-lg ${
-              theme === "dark"
-                ? "bg-gray-700 text-white"
-                : "bg-gray-100 text-gray-800"
-            } hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300`}
-          >
-            {theme === "dark" ? t("switchToLight") : t("switchToDark")}
-          </button>
-        </div>
+      {/* Theme Toggle */}
+      <div style={{ marginBottom: "24px" }}>
+        <h3
+          style={{
+            fontSize: "14px",
+            marginBottom: "8px",
+            color: theme === "dark" ? "#d1d5db" : "#374151",
+          }}
+        >
+          {t("theme")}
+        </h3>
+        <button
+          onClick={() => {
+            toggleTheme();
+            toggleThemeSidebar(); // Close sidebar
+          }}
+          style={{
+            padding: "10px 16px",
+            width: "100%",
+            borderRadius: "8px",
+            background: theme === "dark" ? "#374151" : "#e5e7eb",
+            color: theme === "dark" ? "#ffffff" : "#111827",
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          {theme === "dark" ? t("switchToLight") : t("switchToDark")}
+        </button>
+      </div>
 
-        {/* Color Scheme Section */}
-        <div className="mb-8">
-          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            {t("colorScheme")}
-          </h3>
-          <div className="grid grid-cols-5 gap-3">
-            {Object.keys(colorSchemes).map((scheme) => (
-              <button
-                key={scheme}
-                onClick={() => setColorScheme(scheme)}
-                className={`h-8 w-8 rounded-full ${
-                  colorSchemes[scheme].primary.split(" ")[0]
-                } ${
+      {/* Color Scheme */}
+      <div>
+        <h3
+          style={{
+            fontSize: "14px",
+            marginBottom: "8px",
+            color: theme === "dark" ? "#d1d5db" : "#374151",
+          }}
+        >
+          {t("colorScheme")}
+        </h3>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(5, 1fr)",
+            gap: "12px",
+          }}
+        >
+          {Object.keys(colorSchemes).map((scheme) => (
+            <button
+              key={scheme}
+              onClick={() => {
+                setColorScheme(scheme);
+                toggleThemeSidebar(); // Close sidebar
+              }}
+              aria-label={`${scheme} color scheme`}
+              style={{
+                height: "32px",
+                width: "32px",
+                borderRadius: "999px",
+                backgroundColor: colorSchemes[scheme].primary,
+                border:
                   colorScheme === scheme
-                    ? "ring-2 ring-offset-2 ring-blue-500"
-                    : "hover:ring-2 hover:ring-offset-2 hover:ring-blue-300"
-                } transition-all duration-300`}
-                aria-label={`${scheme} color scheme`}
-              />
-            ))}
-          </div>
+                    ? "2px solid #3b82f6"
+                    : "1px solid #ccc",
+                cursor: "pointer",
+              }}
+            />
+          ))}
         </div>
       </div>
     </aside>

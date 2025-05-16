@@ -1,67 +1,246 @@
-"use client";
-import React, { useContext } from "react";
-import { Globe, Settings } from "lucide-react";
-import { LanguageContext } from "../context/LanguageProvider";
-import Link from "next/link";
+import * as React from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { styled } from "@mui/material/styles";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Tooltip,
+  Menu,
+  MenuItem,
+  Box,
+} from "@mui/material";
+import { useContext } from "react";
+import { ThemeContext } from "../context/ThemeProvider";
+import { LanguageContext } from "../context/LanguageProvider"; // Import LanguageContext
+import HomeIcon from "@mui/icons-material/Home";
+import FlagIcon from "@mui/icons-material/Flag";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import ChatIcon from "@mui/icons-material/Chat";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LanguageIcon from "@mui/icons-material/Language";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LockIcon from "@mui/icons-material/Lock";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 
-const Header = ({ isSidebarOpen }) => {
-  const { language, setLanguage, t } = useContext(LanguageContext);
+const drawerWidth = 280;
+const collapsedWidth = 80;
+const leftAdjustment = 20;
+const rightAdjustment = 20;
 
-  const languages = [
-    { code: "en", name: "English" },
-    { code: "es", name: "Español" },
-    { code: "hi", name: "हिन्दी (Hindi)" },
-  ];
+const StyledAppBar = styled(AppBar, {
+  shouldForwardProp: (prop) => prop !== "sidebarOpen",
+})(({ theme, sidebarOpen }) => ({
+  background: "var(--card-bg)", // #1f2937 in dark mode
+  backgroundColor:
+    theme.palette.mode === "dark" ? "rgba(29, 41, 55, 0.3)" : "var(--card-bg)", // Slightly translucent in dark mode
+  backdropFilter: "blur(20px)",
+  borderBottom: "1px solid var(--card-border)",
+  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.15)",
+  color: "var(--foreground)",
+  zIndex: theme.zIndex.drawer + 1,
+  position: "fixed",
+  top: 14,
+  left: sidebarOpen
+    ? drawerWidth + leftAdjustment
+    : collapsedWidth + leftAdjustment,
+  width: `calc(100% - ${
+    sidebarOpen
+      ? drawerWidth + leftAdjustment + rightAdjustment
+      : collapsedWidth + leftAdjustment + rightAdjustment
+  }px)`,
+  borderBottomLeftRadius: "10px",
+  borderBottomRightRadius: "10px",
+  borderTopRightRadius: "10px",
+  borderTopLeftRadius: "10px",
+  transition: theme.transitions.create(["left", "width"], {
+    easing: theme.transitions.easing.easeInOut,
+    duration: theme.transitions.duration.standard,
+  }),
+  boxSizing: "border-box",
+}));
+
+const pageDetails = [
+  { path: "/", name: "dashboard", icon: <HomeIcon /> },
+  { path: "/goals", name: "goals", icon: <FlagIcon /> },
+  { path: "/transactions", name: "transactions", icon: <SwapHorizIcon /> },
+  { path: "/chatbot", name: "chatbot", icon: <ChatIcon /> },
+];
+
+export default function Header({
+  toggleTheme,
+  isDarkMode,
+  sidebarOpen,
+  setIsSidebarOpen,
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { theme } = useContext(ThemeContext);
+  const { language, setLanguage, t } = useContext(LanguageContext); // Access LanguageContext
+  const [languageAnchorEl, setLanguageAnchorEl] = React.useState(null);
+
+  const currentPage = pageDetails.find((page) => page.path === pathname) || {
+    name: "dashboard",
+    icon: <HomeIcon />,
+  };
+
+  const handleLanguageClick = (event) => {
+    setLanguageAnchorEl(event.currentTarget);
+  };
+
+  const handleLanguageClose = (lang) => {
+    if (lang) {
+      setLanguage(lang); // Update the language using setLanguage
+      // Change language logic here
+    }
+    setLanguageAnchorEl(null);
+  };
+
+  const handleSettingsClick = () => {
+    router.push("/settings");
+  };
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700 transition-all duration-300 z-20 ${
-        isSidebarOpen ? "ml-64" : "ml-16"
-      } h-16 flex items-center`}
-    >
-      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-          Dashboard
-        </h1>
-        <div className="flex items-center space-x-4">
-          {/* Language Dropdown */}
-          <div className="relative group">
-            <button
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300"
-              aria-label="Select language"
+    <StyledAppBar sidebarOpen={sidebarOpen}>
+      <Toolbar
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          py: 1.5,
+          boxSizing: "border-box",
+          width: "100%",
+        }}
+      >
+        {/* LEFT SIDE */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Tooltip title="Toggle Sidebar">
+            <IconButton
+              onClick={() => setIsSidebarOpen((prev) => !prev)}
+              sx={{
+                color: "var(--foreground)",
+                opacity: isDarkMode ? 0.5 : 1,
+                bgcolor: "rgba(255, 255, 255, 0.05)",
+                "&:hover": {
+                  bgcolor: "rgba(255, 255, 255, 0.1)",
+                  transform: "scale(1.1)",
+                },
+                transition: "all 0.3s ease",
+              }}
             >
-              <Globe className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-            </button>
-            <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 shadow-lg rounded-md overflow-hidden hidden group-hover:block z-50">
-              {languages.map((lang) => (
-                <button
-                  key={lang.code}
-                  onClick={() => setLanguage(lang.code)}
-                  className={`w-full py-2 px-4 text-left text-sm ${
-                    language === lang.code
-                      ? "bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100"
-                      : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200"
-                  } transition-colors duration-300`}
-                >
-                  {lang.name}
-                </button>
-              ))}
-            </div>
-          </div>
+              {sidebarOpen ? <LockOpenIcon /> : <LockIcon />}
+            </IconButton>
+          </Tooltip>
+          {React.cloneElement(currentPage.icon, {
+            sx: {
+              color: "var(--foreground)",
+              opacity: isDarkMode ? 0.5 : 1,
+            },
+          })}
+          <Typography
+            variant="h6"
+            sx={{
+              fontFamily: '"Inter", sans-serif',
+              fontWeight: 600,
+              textTransform: "capitalize",
+              color: "var(--foreground)",
+              opacity: isDarkMode ? 0.5 : 1,
+            }}
+          >
+            {t(currentPage.name)} {/* Use t() for translation */}
+          </Typography>
+        </Box>
 
-          {/* Settings Icon */}
-          <Link href="/settings">
-            <button
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300"
-              aria-label="Go to settings"
+        {/* RIGHT SIDE */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          {/* Theme Toggle */}
+          <Tooltip
+            title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            <IconButton
+              onClick={toggleTheme}
+              sx={{
+                color: "var(--foreground)",
+                opacity: isDarkMode ? 0.5 : 1,
+                bgcolor: "rgba(255, 255, 255, 0.05)",
+                "&:hover": {
+                  bgcolor: "rgba(255, 255, 255, 0.1)",
+                  transform: "scale(1.1)",
+                },
+                transition: "all 0.3s ease",
+              }}
             >
-              <Settings className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-            </button>
-          </Link>
-        </div>
-      </div>
-    </header>
+              {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
+            </IconButton>
+          </Tooltip>
+
+          {/* Language Button */}
+          <Tooltip title="Change Language">
+            <IconButton
+              onClick={handleLanguageClick}
+              sx={{
+                color: "var(--foreground)",
+                opacity: isDarkMode ? 0.5 : 1,
+                bgcolor: "rgba(255, 255, 255, 0.05)",
+                "&:hover": {
+                  bgcolor: "rgba(255, 255, 255, 0.1)",
+                  transform: "scale(1.1)",
+                },
+                transition: "all 0.3s ease",
+              }}
+            >
+              <LanguageIcon />
+            </IconButton>
+          </Tooltip>
+
+          {/* Language Menu */}
+          <Menu
+            anchorEl={languageAnchorEl}
+            open={Boolean(languageAnchorEl)}
+            onClose={() => handleLanguageClose(null)}
+            PaperProps={{
+              sx: {
+                backdropFilter: "blur(10px)",
+                background: "var(--card-bg)",
+                color: "var(--foreground)",
+                opacity: isDarkMode ? 0.7 : 1,
+                boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+                border: "1px solid var(--card-border)",
+              },
+            }}
+          >
+            <MenuItem onClick={() => handleLanguageClose("en")}>
+              English
+            </MenuItem>
+            <MenuItem onClick={() => handleLanguageClose("es")}>
+              Español
+            </MenuItem>
+            <MenuItem onClick={() => handleLanguageClose("hi")}>
+              हिन्दी (Hindi)
+            </MenuItem>
+          </Menu>
+
+          {/* Settings Button */}
+          <Tooltip title="Settings">
+            <IconButton
+              onClick={handleSettingsClick}
+              sx={{
+                color: "var(--foreground)",
+                opacity: isDarkMode ? 0.5 : 1,
+                bgcolor: "rgba(255, 255, 255, 0.05)",
+                "&:hover": {
+                  bgcolor: "rgba(255, 255, 195, 0.1)",
+                  transform: "scale(1.1)",
+                },
+                transition: "all 0.3s ease",
+              }}
+            >
+              <SettingsIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      </Toolbar>
+    </StyledAppBar>
   );
-};
-
-export default Header;
+}

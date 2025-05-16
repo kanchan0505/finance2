@@ -1,70 +1,105 @@
-"use client";
 import React, { useContext } from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import { ThemeContext } from "../context/ThemeProvider";
 import { LanguageContext } from "../context/LanguageProvider";
+import { Box, Typography, Paper } from "@mui/material";
+
+const budgetData = [
+  { name: "spent", value: 65 },
+  { name: "remaining", value: 35 },
+];
 
 const Profit = ({ chartColors }) => {
   const { colorScheme, colorSchemes } = useContext(ThemeContext);
   const { t } = useContext(LanguageContext);
   const colors = chartColors || colorSchemes[colorScheme].chartColors;
 
-  const data = [
-    { name: "Profit", value: 25.88 },
-    { name: "Remaining", value: 74.12 },
-  ];
+  // Translate data names
+  const translatedData = budgetData.map((item) => ({
+    ...item,
+    name: t(item.name),
+  }));
 
   return (
-    <div className="bg-white shadow-sm rounded-xl p-4 md:p-6 border border-gray-100 mx-4 md:mx-0 transition-all duration-300 hover:shadow-md">
-      <div className="w-full h-[300px] md:h-[400px] flex flex-col items-center justify-between">
-        <div className="h-[80%] w-full relative">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                startAngle={90}
-                endAngle={-270}
-                innerRadius="70%"
-                outerRadius="90%"
-                fill="#8884d8"
-                dataKey="value"
-                paddingAngle={0}
-                cornerRadius={10}
-                stroke="none"
-              >
-                {data.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={index === 0 ? colors[0] : "var(--card-bg)"}
-                  />
-                ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-            <h3 className="text-gray-700 dark:text-gray-300 text-sm md:text-base font-semibold">
-              {t("profitMargin")}
-            </h3>
-            <p className="text-blue-500 dark:text-blue-300 text-xl md:text-3xl font-bold mt-1">
-              25.88%
-            </p>
-            <p className="text-gray-500 text-xs md:text-sm mt-2">
-              {t("stableGrowth")}
-            </p>
-          </div>
-        </div>
-        <div className="flex justify-between w-full mt-4 text-gray-700 dark:text-gray-300 text-xs md:text-sm">
-          <span className="bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-full">
-            {t("savedAmount")}: $10,000
-          </span>
-          <span className="bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-full">
-            {t("growthPercent")}: 45%
-          </span>
-        </div>
-      </div>
-    </div>
+    <Paper
+      elevation={3}
+      sx={{
+        p: { xs: 2, md: 3 },
+        borderRadius: 2,
+        border: "1px solid",
+        borderColor: "var(--card-border)",
+        mx: { xs: 1, md: 0 },
+        transition: "box-shadow 0.3s",
+        "&:hover": {
+          boxShadow: 6,
+        },
+        bgcolor: "var(--card-bg)",
+      }}
+    >
+      <Typography
+        variant="h6"
+        component="h2"
+        sx={{ mb: 2, color: "var(--foreground)", fontWeight: 600 }}
+      >
+        {t("budgetOverview")}
+      </Typography>
+      <Box sx={{ width: "100%", height: { xs: 300, md: 400 } }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={translatedData}
+              cx="50%"
+              cy="50%"
+              labelLine={false}
+              outerRadius={120}
+              innerRadius={80}
+              fill="#8884d8"
+              dataKey="value"
+              nameKey="name"
+              label={({ name, percent }) =>
+                `${name} ${(percent * 100).toFixed(0)}%`
+              }
+              animationBegin={0}
+              animationDuration={800}
+              animationEasing="ease-in-out"
+            >
+              {translatedData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={colors[index % colors.length]}
+                  style={{ transition: "opacity 0.3s", cursor: "pointer" }}
+                />
+              ))}
+            </Pie>
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "var(--tooltip-bg)",
+                border: "1px solid var(--tooltip-border)",
+                borderRadius: 8,
+                color: "var(--tooltip-text)",
+                boxShadow: "0 2px 10px rgba(0, 0, 0, 0.05)",
+              }}
+            />
+            <Legend
+              verticalAlign="bottom"
+              height={36}
+              formatter={(value) => (
+                <Typography sx={{ color: "var(--foreground)" }}>
+                  {value}
+                </Typography>
+              )}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </Box>
+    </Paper>
   );
 };
 

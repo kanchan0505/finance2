@@ -11,17 +11,41 @@ import {
 import Profit from "../components/Profit";
 import Expensechart from "../components/Expensechart";
 import CategoryChart from "../components/CategoryChart";
+
 import SpendingTrendChart from "../components/SpendingTrendChart";
 import { ThemeContext } from "../context/ThemeProvider";
+import { Box, Button } from "@mui/material";
 
 export default function Overview() {
   const { colorScheme, colorSchemes, isThemeSidebarOpen, toggleThemeSidebar } =
     useContext(ThemeContext);
 
   return (
-    <div className="flex-1 overflow-auto relative">
-      <div className="max-w-7xl mx-auto py-4 px-4 lg:px-8">
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-6">
+    <Box
+      flex={1}
+      overflow="auto"
+      position="relative"
+      // full height minus any header if needed, else minHeight here
+      minHeight="100vh"
+    >
+      <Box
+        maxWidth="112rem" // approx Tailwind max-w-7xl
+        mx="auto"
+        py={4}
+        px={{ xs: 4, lg: 8 }}
+        mt={10}
+      >
+        {/* Stat Cards Grid */}
+        <Box
+          display="grid"
+          gridTemplateColumns={{
+            xs: "repeat(1, 1fr)",
+            sm: "repeat(2, 1fr)",
+            lg: "repeat(4, 1fr)",
+          }}
+          gap={2}
+          mb={6}
+        >
           <StatCard name="Total Income" icon={DollarSign} value="$5,000" />
           <StatCard
             name="Total Expenses"
@@ -30,42 +54,63 @@ export default function Overview() {
           />
           <StatCard name="Savings" icon={PiggyBank} value="$2,000" />
           <StatCard name="Remaining Budget" icon={CreditCard} value="$500" />
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          <div className="w-full">
+        </Box>
+
+        {/* Charts Grid */}
+        <Box
+          display="grid"
+          gridTemplateColumns={{
+            xs: "1fr",
+            lg: "repeat(2, 1fr)",
+          }}
+          gap={3}
+          mt={6}
+        >
+          <Box width="100%">
             <Expensechart chartColors={colorSchemes[colorScheme].chartColors} />
-          </div>
-          <div className="w-full">
+          </Box>
+          <Box width="100%">
             <CategoryChart
               chartColors={colorSchemes[colorScheme].chartColors}
             />
-          </div>
-          <div className="w-full">
+          </Box>
+          <Box width="100%">
             <Profit chartColors={colorSchemes[colorScheme].chartColors} />
-          </div>
-          <div className="w-full">
+          </Box>
+          <Box width="100%">
             <SpendingTrendChart
               chartColors={colorSchemes[colorScheme].chartColors}
             />
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
 
       {/* Theme Icon in Bottom-Right Corner */}
-      <button
+      <Button
         onClick={() => {
           console.log("Theme icon clicked");
           toggleThemeSidebar();
         }}
-        className={`fixed bottom-6 right-6 p-3 rounded-full shadow-lg transition-all duration-300 z-50 ${
-          isThemeSidebarOpen
-            ? "bg-blue-500 text-white"
-            : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-        }`}
         aria-label="Toggle theme sidebar"
+        variant="contained"
+        sx={{
+          position: "fixed",
+          bottom: 24,
+          right: 24,
+          p: 1.5,
+          borderRadius: "50%",
+          boxShadow: 3,
+          zIndex: 50,
+          minWidth: "auto",
+          bgcolor: isThemeSidebarOpen ? "primary.main" : "background.paper",
+          color: isThemeSidebarOpen ? "common.white" : "text.primary",
+          "&:hover": {
+            bgcolor: isThemeSidebarOpen ? "primary.dark" : "grey.100",
+          },
+        }}
       >
         <Palette size={24} />
-      </button>
-    </div>
+      </Button>
+    </Box>
   );
 }

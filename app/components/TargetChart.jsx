@@ -1,8 +1,7 @@
 import React, { useContext } from "react";
 import {
-  PieChart,
-  Pie,
-  Cell,
+  RadialBarChart,
+  RadialBar,
   Legend,
   Tooltip,
   ResponsiveContainer,
@@ -11,24 +10,21 @@ import { ThemeContext } from "../context/ThemeProvider";
 import { LanguageContext } from "../context/LanguageProvider";
 import { Box, Typography, Paper } from "@mui/material";
 
-const data = [
-  { name: "food", value: 30 },
-  { name: "entertainment", value: 20 },
-  { name: "bills", value: 25 },
-  { name: "transportation", value: 15 },
-  { name: "others", value: 10 },
+const targetData = [
+  {
+    name: "Target Achievement",
+    value: 75,
+    fill: "#8884d8",
+  },
 ];
 
-const CategoryChart = ({ chartColors }) => {
+const TargetChart = ({ chartColors }) => {
   const { colorScheme, colorSchemes } = useContext(ThemeContext);
   const { t } = useContext(LanguageContext);
   const colors = chartColors || colorSchemes[colorScheme].chartColors;
 
-  // Translate data names
-  const translatedData = data.map((item) => ({
-    ...item,
-    name: t(item.name),
-  }));
+  // Override fill with theme color for consistency
+  targetData[0].fill = colors[0];
 
   return (
     <Paper
@@ -51,35 +47,41 @@ const CategoryChart = ({ chartColors }) => {
         component="h2"
         sx={{ mb: 2, color: "var(--foreground)", fontWeight: 600 }}
       >
-        {t("expenseCategory")}
+        {t("targetProgress")}
       </Typography>
       <Box sx={{ width: "100%", height: { xs: 300, md: 400 } }}>
         <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={translatedData}
-              cx="50%"
-              cy="50%"
-              labelLine={true}
-              outerRadius={100}
-              fill="#8884d8"
+          <RadialBarChart
+            cx="50%"
+            cy="50%"
+            innerRadius="70%"
+            outerRadius="100%"
+            barSize={20}
+            data={targetData}
+            startAngle={90}
+            endAngle={-270}
+          >
+            <RadialBar
+              minAngle={15}
+              background={{ fill: "var(--background)" }}
+              for
+              background
+              clockWise
               dataKey="value"
-              nameKey="name"
-              label={({ name, percent }) =>
-                `${name} ${(percent * 100).toFixed(0)}%`
-              }
-              animationBegin={0}
-              animationDuration={800}
-              animationEasing="ease-in-out"
-            >
-              {translatedData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={colors[index % colors.length]}
-                  style={{ transition: "opacity 0.3s", cursor: "pointer" }}
-                />
-              ))}
-            </Pie>
+              cornerRadius={10}
+            />
+            <Legend
+              iconSize={10}
+              layout="vertical"
+              verticalAlign="middle"
+              align="right"
+              wrapperStyle={{ fontSize: 14, color: "var(--foreground)" }}
+              formatter={(value) => (
+                <Typography sx={{ color: "var(--foreground)" }}>
+                  {value}
+                </Typography>
+              )}
+            />
             <Tooltip
               contentStyle={{
                 backgroundColor: "var(--tooltip-bg)",
@@ -89,20 +91,11 @@ const CategoryChart = ({ chartColors }) => {
                 boxShadow: "0 2px 10px rgba(0, 0, 0, 0.05)",
               }}
             />
-            <Legend
-              verticalAlign="bottom"
-              height={36}
-              formatter={(value) => (
-                <Typography sx={{ color: "var(--foreground)" }}>
-                  {value}
-                </Typography>
-              )}
-            />
-          </PieChart>
+          </RadialBarChart>
         </ResponsiveContainer>
       </Box>
     </Paper>
   );
 };
 
-export default CategoryChart;
+export default TargetChart;

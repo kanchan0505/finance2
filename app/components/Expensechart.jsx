@@ -1,4 +1,3 @@
-"use client";
 import React, { useContext } from "react";
 import {
   CartesianGrid,
@@ -12,6 +11,7 @@ import {
 import { TrendingUp } from "lucide-react";
 import { ThemeContext } from "../context/ThemeProvider";
 import { LanguageContext } from "../context/LanguageProvider";
+import { Box, Typography, Paper, Stack } from "@mui/material";
 
 const chartData = [
   { month: "Jan", expenses: 1200, income: 2000 },
@@ -29,17 +29,54 @@ const chartData = [
 ];
 
 const Expensechart = ({ chartColors }) => {
-  const { colorScheme, colorSchemes } = useContext(ThemeContext);
+  const { colorScheme, colorSchemes, theme } = useContext(ThemeContext);
   const { t } = useContext(LanguageContext);
   const colors = chartColors || colorSchemes[colorScheme].chartColors;
 
   return (
-    <div className="bg-white shadow-sm rounded-xl p-4 md:p-6 border border-gray-100 mx-4 md:mx-0 transition-all duration-300 hover:shadow-md">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base md:text-lg font-semibold text-gray-800"></h2>
-        <TrendingUp className="h-5 w-5 text-blue-400 dark:text-blue-300 hover:text-blue-600 dark:hover:text-blue-200 transition-colors duration-300" />
-      </div>
-      <div className="w-full h-[300px] md:h-[400px]">
+    <Paper
+      elevation={3}
+      sx={{
+        p: { xs: 2, md: 3 },
+        borderRadius: 2,
+        border: "1px solid",
+        borderColor: "var(--card-border)",
+        mx: { xs: 1, md: 0 },
+        transition: "box-shadow 0.3s",
+        "&:hover": {
+          boxShadow: 6,
+        },
+        bgcolor: "var(--card-bg)",
+      }}
+    >
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+      >
+        <Typography
+          variant="h6"
+          sx={{ fontWeight: 600, color: "var(--foreground)" }}
+        >
+          {t("monthlyComparison")}
+        </Typography>
+        <TrendingUp
+          size={20}
+          color={theme === "dark" ? "#60a5fa" : "blue"}
+          style={{ cursor: "pointer", transition: "color 0.3s" }}
+          onMouseOver={(e) =>
+            (e.currentTarget.style.color =
+              theme === "dark" ? "#93c5fd" : "#1976d2")
+          }
+          onMouseOut={(e) =>
+            (e.currentTarget.style.color =
+              theme === "dark" ? "#60a5fa" : "blue")
+          }
+        />
+      </Stack>
+
+      <Box sx={{ width: "100%", height: { xs: 300, md: 400 } }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
@@ -57,18 +94,24 @@ const Expensechart = ({ chartColors }) => {
             </defs>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="var(--card-border)"
+              stroke={theme === "dark" ? "#4b5563" : "#e0e0e0"}
               opacity={0.7}
             />
             <XAxis
               dataKey="month"
-              stroke="var(--chart-axis)"
-              tick={{ fontSize: 12, fill: "var(--chart-axis)" }}
+              stroke={theme === "dark" ? "#9ca3af" : "#666"}
+              tick={{
+                fontSize: 12,
+                fill: theme === "dark" ? "#9ca3af" : "#666",
+              }}
               interval="preserveStartEnd"
             />
             <YAxis
-              stroke="var(--chart-axis)"
-              tick={{ fontSize: 12, fill: "var(--chart-axis)" }}
+              stroke={theme === "dark" ? "#9ca3af" : "#666"}
+              tick={{
+                fontSize: 12,
+                fill: theme === "dark" ? "#9ca3af" : "#666",
+              }}
               width={40}
             />
             <Tooltip
@@ -76,13 +119,14 @@ const Expensechart = ({ chartColors }) => {
                 backgroundColor: "var(--tooltip-bg)",
                 borderColor: "var(--tooltip-border)",
                 fontSize: "12px",
-                borderRadius: "8px",
+                borderRadius: 8,
                 boxShadow: "0 2px 10px rgba(0, 0, 0, 0.05)",
+                color: "var(--tooltip-text)",
               }}
-              itemStyle={{ color: "var(--tooltip-text)" }}
+              itemStyle={{ color: "var(--foreground)" }}
               formatter={(value, name) => [
                 `$${value}`,
-                name.charAt(0).toUpperCase() + name.slice(1),
+                t(name), // Translate expenses and income
               ]}
             />
             <Line
@@ -95,7 +139,7 @@ const Expensechart = ({ chartColors }) => {
                 r: 6,
                 strokeWidth: 2,
                 fill: colors[0],
-                stroke: "var(--card-bg)",
+                stroke: theme === "dark" ? "#1f2937" : "#fff",
               }}
               name="expenses"
             />
@@ -109,14 +153,14 @@ const Expensechart = ({ chartColors }) => {
                 r: 6,
                 strokeWidth: 2,
                 fill: colors[1],
-                stroke: "var(--card-bg)",
+                stroke: theme === "dark" ? "#1f2937" : "#fff",
               }}
               name="income"
             />
           </LineChart>
         </ResponsiveContainer>
-      </div>
-    </div>
+      </Box>
+    </Paper>
   );
 };
 

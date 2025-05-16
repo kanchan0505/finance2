@@ -68,3 +68,11 @@ body {
 .text-gray-500 {
   color: var(--text-secondary);
 }
+.divider-border {
+  background-color: var(--card-border);
+  opacity: 0.1;
+}
+
+.drawer-header {
+  border-bottom: 1px solid var(--card-border);
+}

@@ -8,6 +8,7 @@ import LanguageProvider from "./context/LanguageProvider";
 import ThemeSidebar from "./components/ThemeSidebar";
 import CustomCursor from "./context/CustomCursor";
 import { useState } from "react";
+import { Box } from "@mui/material";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,21 +22,42 @@ const geistMono = Geist_Mono({
 
 export default function RootLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [manualMode, setManualMode] = useState(true); // or false, whatever you want
 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="antialiased bg-gray-50 dark:bg-gray-900">
+      <body className="antialiased">
         <ThemeProvider>
           <LanguageProvider>
             <CustomCursor />
-            <div className="flex min-h-screen">
-              <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-              <div className="flex-1 flex flex-col">
-                <Header isSidebarOpen={isSidebarOpen} />
-                <main className="flex-1 pt-16">{children}</main>
-              </div>
+            <Box sx={{ display: "flex", minHeight: "100vh" }}>
+              <Sidebar
+                isOpen={isSidebarOpen}
+                setIsOpen={setIsSidebarOpen}
+                open={isSidebarOpen}
+                onToggle={setIsSidebarOpen} // ✅ This is important
+                isManualMode={manualMode}
+                onModeToggle={setManualMode}
+              />
+              <Box
+                component="main"
+                sx={{
+                  flexGrow: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  ml: isSidebarOpen ? "10px" : "64px",
+                  transition: "margin-left 0.3s ease",
+                }}
+              >
+                <Header
+                  sidebarOpen={isSidebarOpen}
+                  setIsSidebarOpen={setIsSidebarOpen}
+                />
+
+                <Box sx={{ flexGrow: 1, pt: "64px" }}>{children}</Box>
+              </Box>
               <ThemeSidebar />
-            </div>
+            </Box>
           </LanguageProvider>
         </ThemeProvider>
       </body>
