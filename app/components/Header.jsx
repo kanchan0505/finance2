@@ -69,12 +69,7 @@ const pageDetails = [
   { path: "/chatbot", name: "chatbot", icon: <ChatIcon /> },
 ];
 
-export default function Header({
-  toggleTheme,
-  isDarkMode,
-  sidebarOpen,
-  setIsSidebarOpen,
-}) {
+export default function Header({ isDarkMode, sidebarOpen, setIsSidebarOpen }) {
   const router = useRouter();
   const pathname = usePathname();
   const { theme } = useContext(ThemeContext);
@@ -85,6 +80,7 @@ export default function Header({
     name: "dashboard",
     icon: <HomeIcon />,
   };
+  const { toggleTheme } = useContext(ThemeContext);
 
   const handleLanguageClick = (event) => {
     setLanguageAnchorEl(event.currentTarget);
@@ -159,19 +155,22 @@ export default function Header({
             title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
           >
             <IconButton
-              onClick={toggleTheme}
-              sx={{
-                color: "var(--foreground)",
-                opacity: isDarkMode ? 0.5 : 1,
-                bgcolor: "rgba(255, 255, 255, 0.05)",
-                "&:hover": {
-                  bgcolor: "rgba(255, 255, 255, 0.1)",
-                  transform: "scale(1.1)",
-                },
-                transition: "all 0.3s ease",
+              onClick={() => {
+                toggleTheme();
+              }}
+              style={{
+                padding: "3px 2px",
+                height: "40px",
+                fontSize: "10px",
+                width: "40%",
+                borderRadius: "8px",
+                background: theme === "dark" ? "#374151" : "#e5e7eb",
+                color: theme === "dark" ? "#ffffff" : "#111827",
+                border: "none",
+                cursor: "pointer",
               }}
             >
-              {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
+              {theme === "dark" ? t("switchToLight") : t("switchToDark")}
             </IconButton>
           </Tooltip>
 

@@ -1,3 +1,4 @@
+// app/overview/page.jsx
 "use client";
 import React, { useContext } from "react";
 import StatCard from "../components/StatCard";
@@ -11,7 +12,6 @@ import {
 import Profit from "../components/Profit";
 import Expensechart from "../components/Expensechart";
 import CategoryChart from "../components/CategoryChart";
-
 import SpendingTrendChart from "../components/SpendingTrendChart";
 import { ThemeContext } from "../context/ThemeProvider";
 import { Box, Button } from "@mui/material";
@@ -20,21 +20,20 @@ export default function Overview() {
   const { colorScheme, colorSchemes, isThemeSidebarOpen, toggleThemeSidebar } =
     useContext(ThemeContext);
 
+  // Fallback chart colors if colorSchemes[colorScheme] is undefined
+  const defaultChartColors = [
+    "#60A5FA",
+    "#93C5FD",
+    "#BFDBFE",
+    "#DBEAFE",
+    "#EFF6FF",
+  ];
+  const chartColors =
+    colorSchemes[colorScheme]?.chartColors || defaultChartColors;
+
   return (
-    <Box
-      flex={1}
-      overflow="auto"
-      position="relative"
-      // full height minus any header if needed, else minHeight here
-      minHeight="100vh"
-    >
-      <Box
-        maxWidth="112rem" // approx Tailwind max-w-7xl
-        mx="auto"
-        py={4}
-        px={{ xs: 4, lg: 8 }}
-        mt={10}
-      >
+    <Box flex={1} overflow="auto" position="relative" minHeight="100vh">
+      <Box maxWidth="112rem" mx="auto" py={4} px={{ xs: 4, lg: 8 }} mt={10}>
         {/* Stat Cards Grid */}
         <Box
           display="grid"
@@ -67,20 +66,16 @@ export default function Overview() {
           mt={6}
         >
           <Box width="100%">
-            <Expensechart chartColors={colorSchemes[colorScheme].chartColors} />
+            <Expensechart chartColors={chartColors} />
           </Box>
           <Box width="100%">
-            <CategoryChart
-              chartColors={colorSchemes[colorScheme].chartColors}
-            />
+            <CategoryChart chartColors={chartColors} />
           </Box>
           <Box width="100%">
-            <Profit chartColors={colorSchemes[colorScheme].chartColors} />
+            <Profit chartColors={chartColors} />
           </Box>
           <Box width="100%">
-            <SpendingTrendChart
-              chartColors={colorSchemes[colorScheme].chartColors}
-            />
+            <SpendingTrendChart chartColors={chartColors} />
           </Box>
         </Box>
       </Box>

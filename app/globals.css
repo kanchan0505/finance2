@@ -10,11 +10,13 @@
   --tooltip-bg: #ffffff;
   --tooltip-border: #e2e8f0;
   --tooltip-text: #4a5568;
+  --primary: #3b82f6; /* Default (blue) */
 }
 .dark {
   --background: #0a0a0a;
   --foreground: #ededed;
   --card-bg: #1f2937;
+  --primary: #8b5cf6; /* Dark theme purple (or whatever you want) */
   --card-border: #374151;
 }
 

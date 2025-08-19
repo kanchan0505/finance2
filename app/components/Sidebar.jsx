@@ -22,11 +22,9 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { useContext } from "react";
 import { LanguageContext } from "../context/LanguageProvider";
-import { ThemeContext } from "../context/ThemeProvider"; // Adjust the path as needed
+import { ThemeContext } from "../context/ThemeProvider";
 const drawerWidth = 280;
 const collapsedWidth = 80;
-
-// In Sidebar.jsx
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -62,36 +60,12 @@ const StyledDrawer = styled(Drawer, {
   },
 }));
 
-const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
-  borderRadius: 8,
-  margin: theme.spacing(0.5, 1),
-  padding: theme.spacing(1, 2),
-  transition: "background-color 0.3s ease",
-  "&:hover": {
-    backgroundColor: alpha(primaryColor, 0.05), // Use dynamic primary color
-  },
-  "&.Mui-selected": {
-    backgroundColor: alpha(primaryColor, 0.1), // Use dynamic primary color
-    "&:hover": {
-      backgroundColor: alpha(primaryColor, 0.15),
-    },
-  },
-  "& .MuiListItemIcon-root": {
-    color: "var(--text-secondary)",
-    minWidth: 40,
-    fontSize: "1.2rem",
-  },
-  "&.Mui-selected .MuiListItemIcon-root": {
-    color: primaryColor, // Use dynamic primary color
-  },
-}));
-
 const StyledListItemText = styled(ListItemText)(({ theme }) => ({
   "& .MuiTypography-root": {
     fontFamily: '"Poppins", sans-serif',
     fontWeight: 500,
     fontSize: "0.95rem",
-    color: "#374151", // Dark gray for text
+    color: "#374151",
   },
 }));
 
@@ -123,8 +97,13 @@ export default function Sidebar({
   const router = useRouter();
   const pathname = usePathname();
   const { colorScheme, colorSchemes } = useContext(ThemeContext);
-  const primaryColor = colorSchemes[colorScheme].primary; // Defined here
-  const { t } = useContext(LanguageContext); // Access t function
+  const { t } = useContext(LanguageContext);
+
+  // ✅ Safe fallback colors
+  const primaryColor = colorSchemes?.[colorScheme]?.primary || "#6366f1"; // Tailwind indigo
+  const secondaryColor = colorSchemes?.[colorScheme]?.secondary || "#a78bfa"; // Lavender
+
+  // Styled button with safe primaryColor in scope
   const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
     borderRadius: 8,
     margin: theme.spacing(0.5, 1),
@@ -149,21 +128,18 @@ export default function Sidebar({
     },
   }));
 
-  // Move ModeButton inside the Sidebar function
-  const ModeButton = styled(IconButton)(({ theme, active }) => ({
+  const ModeButton = styled(IconButton)(({ active }) => ({
     width: 28,
     height: 28,
-    backgroundColor: active ? alpha(primaryColor, 0.1) : "transparent", // Now primaryColor is in scope
+    backgroundColor: active ? alpha(primaryColor, 0.1) : "transparent",
     border: `1px solid ${
-      active ? alpha(primaryColor, 0.3) : "rgba(0, 0, 0, 0.1)"
+      active ? alpha(primaryColor, 0.3) : "rgba(0,0,0,0.1)"
     }`,
     borderRadius: "50%",
     padding: 0,
     transition: "all 0.3s ease",
     "&:hover": {
-      backgroundColor: active
-        ? alpha(primaryColor, 0.2)
-        : "rgba(0, 0, 0, 0.05)",
+      backgroundColor: active ? alpha(primaryColor, 0.2) : "rgba(0,0,0,0.05)",
     },
     "& .MuiSvgIcon-root": {
       fontSize: "16px",
@@ -172,30 +148,19 @@ export default function Sidebar({
   }));
 
   const handleHeaderClick = () => {
-    if (isManualMode) {
-      console.log("Toggling sidebar via header click, current state:", open);
-      if (onToggle) {
-        onToggle(!open);
-      }
-    }
+    if (isManualMode && onToggle) onToggle(!open);
   };
 
   const handleModeToggle = () => {
-    if (onModeToggle) {
-      onModeToggle(!isManualMode);
-    }
+    if (onModeToggle) onModeToggle(!isManualMode);
   };
 
   const handleMouseEnter = () => {
-    if (!isManualMode && !open) {
-      onToggle(true);
-    }
+    if (!isManualMode && !open) onToggle(true);
   };
 
   const handleMouseLeave = () => {
-    if (!isManualMode && open) {
-      onToggle(false);
-    }
+    if (!isManualMode && open) onToggle(false);
   };
 
   const handleLogout = () => {
@@ -270,12 +235,13 @@ export default function Sidebar({
           </ModeButton>
         </Tooltip>
       </DrawerHeader>
+
       <Divider className="divider-border" sx={{ mb: 1 }} />
       <List sx={{ pt: 1, pb: 1 }}>
         {menuItems.map((item) => (
           <Tooltip
             key={item.text}
-            title={t(item.text)} // Translate tooltip
+            title={t(item.text)}
             placement="right"
             disableInteractive
           >
@@ -284,8 +250,7 @@ export default function Sidebar({
               onClick={() => router.push(item.path)}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
-              {open && <StyledListItemText primary={t(item.text)} />}{" "}
-              {/* Translate menu item */}
+              {open && <StyledListItemText primary={t(item.text)} />}
             </StyledListItemButton>
           </Tooltip>
         ))}
@@ -320,23 +285,17 @@ export default function Sidebar({
               <Typography
                 variant="caption"
                 className="text-secondary-muted"
-                sx={{
-                  fontFamily: '"Poppins", sans-serif',
-                }}
+                sx={{ fontFamily: '"Poppins", sans-serif' }}
               >
                 user@example.com
               </Typography>
             </Box>
             <Tooltip title={t("logout")}>
-              {" "}
-              {/* Translate logout tooltip */}
               <IconButton
                 onClick={handleLogout}
                 sx={{
                   color: "var(--foreground)",
-                  "&:hover": {
-                    color: primaryColor,
-                  },
+                  "&:hover": { color: primaryColor },
                 }}
               >
                 <LogoutIcon fontSize="small" />
