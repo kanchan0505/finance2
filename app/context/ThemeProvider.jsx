@@ -1,6 +1,10 @@
 // context/ThemeProvider.jsx
 "use client";
 import React, { createContext, useState, useEffect } from "react";
+import {
+  ThemeProvider as MuiThemeProvider,
+  createTheme,
+} from "@mui/material/styles";
 
 export const ThemeContext = createContext();
 
@@ -40,7 +44,6 @@ const ThemeProvider = ({ children }) => {
   const [colorScheme, setColorScheme] = useState(() => {
     if (typeof window === "undefined") return "blue";
     const saved = localStorage.getItem("colorScheme");
-    // Validate that the saved colorScheme exists in colorSchemes
     return saved && colorSchemes[saved] ? saved : "blue";
   });
 
@@ -57,6 +60,31 @@ const ThemeProvider = ({ children }) => {
   const toggleTheme = () => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
+
+  // Create MUI theme that syncs with custom theme
+  const muiTheme = createTheme({
+    palette: {
+      mode: theme, // Sync with custom theme (light/dark)
+      primary: {
+        main: colorSchemes[colorScheme]?.primary || "#3B82F6",
+      },
+      background: {
+        default: theme === "dark" ? "#0a0a0a" : "#ffffff", // Match globals.css
+        paper: theme === "dark" ? "#1f2937" : "#ffffff", // Match --card-bg
+      },
+      text: {
+        primary: theme === "dark" ? "#ededed" : "#171717", // Match --foreground
+        secondary: theme === "dark" ? "#9ca3af" : "#6b7280", // Match --text-secondary
+      },
+    },
+    shadows: [
+      "none",
+      "0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12)",
+      "0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)",
+      "0px 3px 5px -1px rgba(0,0,0,0.2),0px 5px 8px 0px rgba(0,0,0,0.14),0px 1px 14px 0px rgba(0,0,0,0.12)", // shadow[3]
+      // ... other shadows
+    ],
+  });
 
   // Apply theme + persist in localStorage
   useEffect(() => {
@@ -82,14 +110,13 @@ const ThemeProvider = ({ children }) => {
         theme,
         toggleTheme,
         colorScheme,
-        setTheme,
         setColorScheme,
         colorSchemes,
         isThemeSidebarOpen,
         toggleThemeSidebar,
       }}
     >
-      {children}
+      <MuiThemeProvider theme={muiTheme}>{children}</MuiThemeProvider>
     </ThemeContext.Provider>
   );
 };

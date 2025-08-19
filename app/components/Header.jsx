@@ -1,3 +1,4 @@
+// components/Header.jsx
 import * as React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { styled } from "@mui/material/styles";
@@ -72,7 +73,7 @@ const pageDetails = [
 export default function Header({ isDarkMode, sidebarOpen, setIsSidebarOpen }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { theme } = useContext(ThemeContext);
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const { language, setLanguage, t } = useContext(LanguageContext); // Access LanguageContext
   const [languageAnchorEl, setLanguageAnchorEl] = React.useState(null);
 
@@ -80,7 +81,6 @@ export default function Header({ isDarkMode, sidebarOpen, setIsSidebarOpen }) {
     name: "dashboard",
     icon: <HomeIcon />,
   };
-  const { toggleTheme } = useContext(ThemeContext);
 
   const handleLanguageClick = (event) => {
     setLanguageAnchorEl(event.currentTarget);
@@ -144,7 +144,7 @@ export default function Header({ isDarkMode, sidebarOpen, setIsSidebarOpen }) {
               opacity: isDarkMode ? 0.5 : 1,
             }}
           >
-            {t(currentPage.name)} {/* Use t() for translation */}
+            {t(currentPage.name)}
           </Typography>
         </Box>
 
@@ -152,25 +152,25 @@ export default function Header({ isDarkMode, sidebarOpen, setIsSidebarOpen }) {
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           {/* Theme Toggle */}
           <Tooltip
-            title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            title={theme === "dark" ? t("switchToLight") : t("switchToDark")}
           >
             <IconButton
-              onClick={() => {
-                toggleTheme();
-              }}
-              style={{
-                padding: "3px 2px",
-                height: "40px",
-                fontSize: "10px",
-                width: "40%",
+              onClick={toggleTheme}
+              sx={{
+                color: "var(--foreground)",
+                opacity: isDarkMode ? 0.5 : 1,
+                bgcolor: "rgba(255, 255, 255, 0.05)",
+                "&:hover": {
+                  bgcolor: "rgba(255, 255, 255, 0.1)",
+                  transform: "scale(1.1)",
+                },
+                transition: "all 0.3s ease",
                 borderRadius: "8px",
-                background: theme === "dark" ? "#374151" : "#e5e7eb",
-                color: theme === "dark" ? "#ffffff" : "#111827",
-                border: "none",
-                cursor: "pointer",
+                width: "40px",
+                height: "40px",
               }}
             >
-              {theme === "dark" ? t("switchToLight") : t("switchToDark")}
+              {theme === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton>
           </Tooltip>
 

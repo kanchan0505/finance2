@@ -1,6 +1,8 @@
+// components/StatCard.jsx
 "use client";
 import React, { useContext } from "react";
 import { LanguageContext } from "../context/LanguageProvider";
+import { ThemeContext } from "../context/ThemeProvider"; // Import ThemeContext
 import { motion } from "framer-motion";
 import { Card, CardContent, Box, Typography, styled } from "@mui/material";
 
@@ -29,44 +31,48 @@ const fadeIn = {
 // Styled components
 const StyledCard = styled(Card)(({ theme }) => ({
   borderRadius: "12px",
-  backgroundColor: "#ffffff",
-  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  backgroundColor: theme.palette.background.paper, // Use MUI theme background
+  boxShadow: theme.shadows[3], // Use MUI shadow
   transition: "transform 0.3s ease, box-shadow 0.3s ease",
   "&:hover": {
     transform: "translateY(-4px)",
-    boxShadow: "0 6px 12px rgba(0, 0, 0, 0.15)",
+    boxShadow: theme.shadows[6], // Stronger shadow on hover
   },
 }));
 
-const IconWrapper = styled(Box)(({ theme }) => ({
+const IconWrapper = styled(Box)(({ theme, primaryColor }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   width: "40px",
   height: "40px",
   borderRadius: "8px",
-  backgroundColor: "#f3f4f6",
-  color: "#374151",
+  backgroundColor: theme.palette.action.hover, // Theme-aware background
+  color: primaryColor || theme.palette.text.primary, // Use primary color for icon
 }));
 
 const StatCard = ({ name, icon: Icon, value }) => {
   const { t } = useContext(LanguageContext);
+  const { theme, colorScheme, colorSchemes } = useContext(ThemeContext); // Access ThemeContext
   const translationKey = name.toLowerCase().replace(/\s/g, "");
+
+  // Fallback primary color
+  const primaryColor = colorSchemes[colorScheme]?.primary || "#3B82F6";
 
   return (
     <motion.div initial="hidden" animate="visible" variants={fadeIn}>
       <StyledCard>
         <CardContent sx={{ p: 3 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
-            <IconWrapper>
-              <Icon sx={{ fontSize: 24, color: "#374151" }} />
+            <IconWrapper primaryColor={primaryColor}>
+              <Icon sx={{ fontSize: 24 }} />
             </IconWrapper>
             <Typography
               variant="subtitle1"
               sx={{
                 fontFamily: '"Poppins", sans-serif',
                 fontWeight: 500,
-                color: "#6b7280",
+                color: theme === "dark" ? "grey.400" : "text.secondary",
               }}
             >
               {t(translationKey)}
@@ -77,7 +83,7 @@ const StatCard = ({ name, icon: Icon, value }) => {
             sx={{
               fontFamily: '"Poppins", sans-serif',
               fontWeight: 600,
-              color: "#374151",
+              color: theme === "dark" ? "common.white" : "text.primary",
             }}
           >
             {value}
